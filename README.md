@@ -1,1 +1,1 @@
-https://medical-guide-ai-chatbot-bbdwwjwm2ijju7rvhthh7f.streamlit.app/
+https://medical-guide-ai-chatbot-smbklk8tvixezsqxtjawpe.streamlit.app/
