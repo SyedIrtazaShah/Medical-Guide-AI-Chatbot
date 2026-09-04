@@ -18,6 +18,7 @@ if "api_key" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
 
+
 # 3. Lock Screen: Ask for API Key First
 if not st.session_state["api_authenticated"]:
     st.title("🔐 MediGuide AI - Access Portal")
@@ -27,10 +28,27 @@ if not st.session_state["api_authenticated"]:
     api_key_input = st.text_input("OpenAI API Key", type="password")
 
     if st.button("Unlock Assistant"):
-        if api_key_input.strip() != "":
-            st.session_state["api_key"] = api_key_input.strip()
-            st.session_state["api_authenticated"] = True
-            st.rerun()  # Refresh app to load main interface
+        key = api_key_input.strip()
+        if key:
+            with st.spinner("Validating API key..."):
+                try:
+                    # Test the key with a minimal completion request
+                    test_model = ChatOpenAI(
+                        model_name="gpt-4o-mini",
+                        openai_api_key=key,
+                        max_tokens=1,
+                        max_retries=0
+                    )
+                    test_model.invoke("test")
+                    
+                    # Key is valid: Save state and allow entry
+                    st.session_state["api_key"] = key
+                    st.session_state["api_authenticated"] = True
+                    st.rerun()
+
+                except Exception as e:
+                    # Key is invalid or call failed: Show error message
+                    st.error("❌ Invalid API Key or authentication failed. Access denied.")
         else:
             st.error("Please enter a valid API key to proceed.")
 
